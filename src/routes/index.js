@@ -7,7 +7,12 @@ const router = express.Router();
 router.get('/health', (req, res) => {
   res.status(200).json({
     status: 'success',
-    message: 'API is running'
+    message: 'API is running',
+    timestamp: new Date().toISOString(),
+    availableRoutes: {
+      lists: '/api/todolists',
+      items: '/api/todolists/:listId/items'
+    }
   });
 });
 
