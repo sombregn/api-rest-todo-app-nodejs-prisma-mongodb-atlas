@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Application Node.js
+  app:
+    build: .
+    container_name: todo-api-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=mongodb://mongo:27017/todolist_db
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - todo-network
+
+  # Base de données MongoDB locale (optionnelle)
+  mongo:
+    image: mongo:7
+    container_name: todo-api-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=todolist_db
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    restart: unless-stopped
+    networks:
+      - todo-network
+
+  # Interface d'administration MongoDB (optionnelle)
+  mongo-express:
+    image: mongo-express:latest
+    container_name: todo-api-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=password
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    networks:
+      - todo-network
+
+volumes:
+  mongo_data:
+
+networks:
+  todo-network:
+    driver: bridge
