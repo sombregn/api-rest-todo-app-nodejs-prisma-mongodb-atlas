@@ -1,4 +1,4 @@
-ais # Utilise l'image officielle Node.js comme base
+# Utilise l'image officielle Node.js comme base
 FROM node:18-alpine
 
 # Définit le répertoire de travail dans le conteneur
